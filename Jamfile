@@ -1,4 +1,7 @@
+# Run from inside Boost source tree e.g. <boost-root>/libs/boost-gil-checksum-bug/
 import path ;
 import testing ;
 
-run test_checksum_bug.cpp ;
+local cwd_path = [ path.native [ path.pwd ] ] ;
+
+run test_checksum_bug.cpp : $(cwd_path) ;

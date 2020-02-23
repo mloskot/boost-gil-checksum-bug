@@ -20,9 +20,9 @@ using bgr121_ref_t = gil::bit_aligned_pixel_reference
 > const;
 using bgr121_image_t = gil::image<bgr121_ref_t, false>;
 using bgr121_view_t = typename bgr121_image_t::view_t;
-using bgr121_value_t = typename bgr121_view_t::value_type;
+using bgr121_pixel_t = typename bgr121_view_t::value_type;
 
-bgr121_value_t bgr121_red(0), bgr121_blue(0);
+bgr121_pixel_t bgr121_red(0), bgr121_blue(0);
 std::string output_dir_path;
 
 void init()
@@ -77,7 +77,7 @@ void save_dump(View const& view, std::string name)
 
     std::vector<std::tuple<int, int, int>> dump;
     dump.reserve(view.width() * view.height());
-    gil::for_each_pixel(view, [&dump](auto const& p)
+    gil::for_each_pixel(view, [&dump](bgr121_pixel_t const& p)
     {
         auto b = (int)get_color(p, gil::blue_t{});
         auto g = (int)get_color(p, gil::green_t{});

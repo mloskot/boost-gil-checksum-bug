@@ -89,12 +89,6 @@ stages:
           CXX: clang++-9
           PACKAGES: clang-9
           LLVM_REPO: llvm-toolchain-bionic-9
-        Clang 9:
-          B2_TOOLSET: clang
-          B2_CXXSTD: 14,17,2a
-          CXX: clang++-9
-          PACKAGES: clang-9
-          LLVM_REPO: llvm-toolchain-bionic-9
         Clang 8:
           B2_TOOLSET: clang
           B2_CXXSTD: 14,17,2a

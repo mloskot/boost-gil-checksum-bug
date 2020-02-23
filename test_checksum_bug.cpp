@@ -2,14 +2,12 @@
 #include <boost/gil.hpp>
 #include <cstdint>
 #include <exception>
-#include <filesystem>
 #include <fstream>
 #include <iostream>
 #include <sstream>
 #include <string>
 #include <tuple>
 #include <vector>
-namespace fs = std::filesystem;
 namespace gil = boost::gil;
 
 // TOOLS ///////////////////////////////////////////////////////////////////////
@@ -25,6 +23,7 @@ using bgr121_view_t = typename bgr121_image_t::view_t;
 using bgr121_value_t = typename bgr121_view_t::value_type;
 
 bgr121_value_t bgr121_red(0), bgr121_blue(0);
+std::string output_dir_path;
 
 void init()
 {
@@ -73,9 +72,8 @@ void save_dump(View const& view, std::string name)
         "_msvc"
 #endif
         ;
-    auto const filename = name + "_" + std::to_string(view.width()) + "x" + std::to_string(view.height());
-    auto const dir_path = fs::path(__FILE__).parent_path(); // MSVC: requires -FC
-    auto out_path = dir_path / (filename + file_suffix + ".txt");
+    std::string const filename = name + "_" + std::to_string(view.width()) + "x" + std::to_string(view.height());
+    std::string const out_path = output_dir_path + '/' + filename + file_suffix + ".txt";
 
     std::vector<std::tuple<int, int, int>> dump;
     dump.reserve(view.width() * view.height());
@@ -87,7 +85,7 @@ void save_dump(View const& view, std::string name)
         dump.emplace_back(r, g, b);
     });
 
-    std::cout << out_path.string() << std::endl;
+    std::cout << "Dump: " << out_path << std::endl;
     std::ofstream ofs(out_path);
     ofs << checksum(view) << std::endl;
     for (auto& p : dump)
@@ -145,10 +143,13 @@ void draw_step(std::ptrdiff_t w, std::ptrdiff_t h)
     }
 }
 
-int main()
+int main(int argc , char* argv[])
 {
     try
     {
+        if (argc != 2) throw std::invalid_argument("path to output directory missing");
+        output_dir_path = argv[1];
+
         draw_loop(3, 3);
         draw_step(3, 3);
 

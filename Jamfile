@@ -1,0 +1,4 @@
+import path ;
+import testing ;
+
+run test_checksum_bug.cpp ;

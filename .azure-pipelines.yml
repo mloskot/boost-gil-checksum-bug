@@ -234,7 +234,7 @@ stages:
 
   - job: 'macOS'
     pool:
-      vmImage: 'macOS-10.14'
+      vmImage: 'macOS-10.13'
     strategy:
       matrix:
         Xcode 10.1:

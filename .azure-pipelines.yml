@@ -72,11 +72,6 @@ stages:
           B2_CXXSTD: 11
           CXX: g++-5
           PACKAGES: g++-5
-        GCC 4.9:
-          B2_TOOLSET: gcc
-          B2_CXXSTD: 11
-          CXX: g++-4.9
-          PACKAGES: g++-4.9
         Clang 10:
           B2_TOOLSET: clang
           B2_CXXSTD: 14,17,2a

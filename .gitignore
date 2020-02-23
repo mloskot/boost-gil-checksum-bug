@@ -2,6 +2,7 @@
 .vs
 .vscode
 *build*
+*bin*
 /cmake-build-debug/
 /cmake-build-release/
 /.idea

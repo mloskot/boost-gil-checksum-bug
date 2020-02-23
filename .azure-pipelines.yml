@@ -152,7 +152,7 @@ stages:
         echo "BOOST_ROOT=$BOOST_ROOT"
 
         cd $BOOST_ROOT/libs/$SELF
-        ci/azure-pipelines/build.sh --debug-configuration
+        ci/azure-pipelines/build.sh --debug-configuration -d2
       displayName: 'Build'
 
   - job: 'Windows'

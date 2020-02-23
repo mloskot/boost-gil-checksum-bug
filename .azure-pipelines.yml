@@ -74,7 +74,7 @@ stages:
           PACKAGES: g++-5
         GCC 4.9:
           B2_TOOLSET: gcc
-          B2_CXXSTD: 03,11
+          B2_CXXSTD: 11
           CXX: g++-4.9
           PACKAGES: g++-4.9
         Clang 10:
@@ -103,7 +103,7 @@ stages:
           LLVM_REPO: llvm-toolchain-bionic-7
         Clang 6:
           B2_TOOLSET: clang
-          B2_CXXSTD: 03,11,14,17,2a
+          B2_CXXSTD: 11,14,17,2a
           B2_CXXFLAGS: -stdlib=libc++
           CXX: clang++-6.0
           PACKAGES: clang-6.0
@@ -267,19 +267,19 @@ stages:
           XCODE_APP: /Applications/Xcode_9.2.app
         Xcode 9.1:
           B2_TOOLSET: clang
-          B2_CXXSTD: 03,11
+          B2_CXXSTD: 11
           XCODE_APP: /Applications/Xcode_9.1.app
         Xcode 9.0.1:
           B2_TOOLSET: clang
-          B2_CXXSTD: 03,11
+          B2_CXXSTD: 11
           XCODE_APP: /Applications/Xcode_9.0.1.app
         Xcode 9.0:
           B2_TOOLSET: clang
-          B2_CXXSTD: 03,11
+          B2_CXXSTD: 11
           XCODE_APP: /Applications/Xcode_9.app
         Xcode 8.3.3:
           B2_TOOLSET: clang
-          B2_CXXSTD: 03,11
+          B2_CXXSTD: 11
           XCODE_APP: /Applications/Xcode_8.3.3.app
     steps:
     - bash: |

@@ -1,7 +1,32 @@
 # Run from inside Boost source tree e.g. <boost-root>/libs/boost-gil-checksum-bug/
+import ../../config/checks/config : requires ;
 import path ;
 import testing ;
 
-local cwd_path = [ path.native [ path.pwd ] ] ;
+project
+  :
+  requirements
+    <include>.
+    #<define>BOOST_GIL_USE_CONCEPT_CHECK=1
+    <toolset>msvc:<asynch-exceptions>on
+    <toolset>msvc:<cxxflags>/bigobj
+    <toolset>msvc:<define>_SCL_SECURE_NO_DEPRECATE
+    <toolset>msvc:<define>_CRT_SECURE_NO_WARNINGS
+    <toolset>msvc:<define>_CRT_NONSTDC_NO_DEPRECATE
+    <toolset>msvc:<define>NOMINMAX
+    <toolset>intel:<debug-symbols>off
+    <toolset>gcc:<cxxflags>"-fstrict-aliasing"
+    <toolset>darwin:<cxxflags>"-fstrict-aliasing"
+    <toolset>clang,<variant>debug:<cxxflags>"-fstrict-aliasing"
+    <toolset>clang,<variant>release:<cxxflags>"-fstrict-aliasing"
+    [ requires
+        cxx11_constexpr
+        cxx11_defaulted_functions
+        cxx11_template_aliases
+        cxx11_trailing_result_types  # implies decltype and auto
+        cxx11_variadic_templates
+    ]
+  ;
 
+local cwd_path = [ path.native [ path.pwd ] ] ;
 run test_checksum_bug.cpp : $(cwd_path) ;

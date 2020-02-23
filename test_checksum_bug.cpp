@@ -87,10 +87,14 @@ void save_dump(View const& view, std::string checksum, std::string name)
     });
 
     std::cout << "Dump: " << out_path << std::endl;
+    std::cout << checksum << std::endl;
     std::ofstream ofs(out_path);
     ofs << checksum << std::endl;
     for (auto& p : dump)
+    {
         ofs << std::get<0>(p) << '\t' << std::get<1>(p) << '\t' << std::get<1>(p) << "\n";
+        std::cout << std::get<0>(p) << '\t' << std::get<1>(p) << '\t' << std::get<1>(p) << "\n";
+    }
 }
 
 // TESTS ///////////////////////////////////////////////////////////////////////

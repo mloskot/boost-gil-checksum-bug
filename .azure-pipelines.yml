@@ -108,12 +108,6 @@ stages:
           CXX: clang++-6.0
           PACKAGES: clang-6.0
           LLVM_REPO: llvm-toolchain-bionic-6.0
-        Clang 6:
-          B2_TOOLSET: clang
-          B2_CXXSTD: 14,17,2a
-          CXX: clang++-6.0
-          PACKAGES: clang-6.0
-          LLVM_REPO: llvm-toolchain-bionic-6.0
         Clang 5:
           B2_TOOLSET: clang
           B2_CXXSTD: 11,14,17

@@ -1,5 +1,5 @@
 # Run from inside Boost source tree e.g. <boost-root>/libs/boost-gil-checksum-bug/
-import ../../config/checks/config : requires ;
+import ../config/checks/config : requires ;
 import path ;
 import testing ;
 

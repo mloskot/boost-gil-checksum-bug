@@ -131,7 +131,7 @@ stages:
         sudo -E apt-get update
         sudo -E apt-get -yq --no-install-suggests --no-install-recommends install ${PACKAGES}
 
-        git clone --branch master https://github.com/boostorg/boost-ci.git boost-ci
+        git clone --branch master https://github.com/mloskot/boost-ci.git boost-ci
         cp -pr boost-ci/ci boost-ci/.codecov.yml .
         rm -rf boost-ci
         source ci/azure-pipelines/install.sh
@@ -237,38 +237,47 @@ stages:
         Xcode 10.1:
           B2_TOOLSET: clang
           B2_CXXSTD: 14,17,2a
+          CXX: clang++
           XCODE_APP: /Applications/Xcode_10.1.app
         Xcode 10.0:
           B2_TOOLSET: clang
           B2_CXXSTD: 14,17,2a
+          CXX: clang++
           XCODE_APP: /Applications/Xcode_10.app
         Xcode 9.4.1:
           B2_TOOLSET: clang
           B2_CXXSTD: 11,14,17
+          CXX: clang++
           XCODE_APP: /Applications/Xcode_9.4.1.app
         Xcode 9.4:
           B2_TOOLSET: clang
           B2_CXXSTD: 11,14,17
+          CXX: clang++
           XCODE_APP: /Applications/Xcode_9.4.app
         Xcode 9.3.1:
           B2_TOOLSET: clang
           B2_CXXSTD: 11,14,17
+          CXX: clang++
           XCODE_APP: /Applications/Xcode_9.3.1.app
         Xcode 9.3:
           B2_TOOLSET: clang
           B2_CXXSTD: 11,14
+          CXX: clang++
           XCODE_APP: /Applications/Xcode_9.3.app
         Xcode 9.2:
           B2_TOOLSET: clang
           B2_CXXSTD: 11,14
+          CXX: clang++
           XCODE_APP: /Applications/Xcode_9.2.app
         Xcode 9.1:
           B2_TOOLSET: clang
           B2_CXXSTD: 11
+          CXX: clang++
           XCODE_APP: /Applications/Xcode_9.1.app
         Xcode 9.0.1:
           B2_TOOLSET: clang
           B2_CXXSTD: 11
+          CXX: clang++
           XCODE_APP: /Applications/Xcode_9.0.1.app
         Xcode 9.0:
           B2_TOOLSET: clang
@@ -277,6 +286,7 @@ stages:
         Xcode 8.3.3:
           B2_TOOLSET: clang
           B2_CXXSTD: 11
+          CXX: clang++
           XCODE_APP: /Applications/Xcode_8.3.3.app
     steps:
     - bash: |

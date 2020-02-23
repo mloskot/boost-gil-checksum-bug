@@ -92,8 +92,8 @@ void save_dump(View const& view, std::string checksum, std::string name)
     ofs << checksum << std::endl;
     for (auto& p : dump)
     {
-        ofs << std::get<0>(p) << '\t' << std::get<1>(p) << '\t' << std::get<1>(p) << "\n";
-        std::cout << std::get<0>(p) << '\t' << std::get<1>(p) << '\t' << std::get<1>(p) << "\n";
+        ofs << std::get<0>(p) << '\t' << std::get<1>(p) << '\t' << std::get<2>(p) << "\n";
+        std::cout << std::get<0>(p) << '\t' << std::get<1>(p) << '\t' << std::get<2>(p) << "\n";
     }
 }
 
@@ -101,7 +101,7 @@ void save_dump(View const& view, std::string checksum, std::string name)
 // 1. Fill image with red.
 // 2. Draw a blue line along the diagonal.
 // 3. Calculate checksum.
-void test_draw_loop(std::ptrdiff_t w, std::ptrdiff_t h)
+void test_draw_loop_fail(std::ptrdiff_t w, std::ptrdiff_t h)
 {
     init();
     bgr121_image_t img(w, h);
@@ -127,10 +127,24 @@ void test_draw_loop(std::ptrdiff_t w, std::ptrdiff_t h)
         save_dump(view(img), sum, "dump2_loop");
 
         BOOST_TEST(sum == "2e4950b4");
+
+        auto it = view(img).begin().x();
+        // row 0
+        BOOST_TEST(*it == bgr121_red); ++it;
+        BOOST_TEST(*it == bgr121_red); ++it;
+        BOOST_TEST(*it == bgr121_blue); ++it;
+        // row 1
+        BOOST_TEST(*it == bgr121_red); ++it;
+        BOOST_TEST(*it == bgr121_blue); ++it;
+        BOOST_TEST(*it == bgr121_red); ++it;
+        // row 2
+        BOOST_TEST(*it == bgr121_blue); ++it;
+        BOOST_TEST(*it == bgr121_red); ++it;
+        BOOST_TEST(*it == bgr121_red);
     }
 }
 
-void test_draw_step(std::ptrdiff_t w, std::ptrdiff_t h)
+void test_draw_step_good(std::ptrdiff_t w, std::ptrdiff_t h)
 {
     init();
     bgr121_image_t img(w, h);
@@ -160,6 +174,19 @@ void test_draw_step(std::ptrdiff_t w, std::ptrdiff_t h)
         save_dump(view(img), sum, "dump2_step");
 
         BOOST_TEST(sum == "2e4950b4");
+        auto it = view(img).begin().x();
+        // row 0
+        BOOST_TEST(*it == bgr121_red); ++it;
+        BOOST_TEST(*it == bgr121_red); ++it;
+        BOOST_TEST(*it == bgr121_blue); ++it;
+        // row 1
+        BOOST_TEST(*it == bgr121_red); ++it;
+        BOOST_TEST(*it == bgr121_blue); ++it;
+        BOOST_TEST(*it == bgr121_red); ++it;
+        // row 2
+        BOOST_TEST(*it == bgr121_blue); ++it;
+        BOOST_TEST(*it == bgr121_red); ++it;
+        BOOST_TEST(*it == bgr121_red);
     }
 }
 
@@ -170,8 +197,8 @@ int main(int argc , char* argv[])
         if (argc != 2) throw std::invalid_argument("path to output directory missing");
         output_dir_path = argv[1];
 
-        test_draw_loop(3, 3);
-        test_draw_step(3, 3);
+        test_draw_loop_fail(3, 3);
+        test_draw_step_good(3, 3);
     }
     catch (std::exception const& e)
     {

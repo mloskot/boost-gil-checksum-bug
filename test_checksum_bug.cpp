@@ -1,3 +1,4 @@
+#include <boost/core/lightweight_test.hpp>
 #include <boost/crc.hpp>
 #include <boost/gil.hpp>
 #include <cstdint>
@@ -49,7 +50,7 @@ auto checksum(View const& img_view) -> std::string
 }
 
 template <typename View>
-void save_dump(View const& view, std::string name)
+void save_dump(View const& view, std::string checksum, std::string name)
 {
     char const* const file_suffix =
 #ifdef NDEBUG
@@ -87,7 +88,7 @@ void save_dump(View const& view, std::string name)
 
     std::cout << "Dump: " << out_path << std::endl;
     std::ofstream ofs(out_path);
-    ofs << checksum(view) << std::endl;
+    ofs << checksum << std::endl;
     for (auto& p : dump)
         ofs << std::get<0>(p) << '\t' << std::get<1>(p) << '\t' << std::get<1>(p) << "\n";
 }
@@ -96,14 +97,18 @@ void save_dump(View const& view, std::string name)
 // 1. Fill image with red.
 // 2. Draw a blue line along the diagonal.
 // 3. Calculate checksum.
-void draw_loop(std::ptrdiff_t w, std::ptrdiff_t h)
+void test_draw_loop(std::ptrdiff_t w, std::ptrdiff_t h)
 {
     init();
     bgr121_image_t img(w, h);
     {
         auto v = view(img);
         fill(v.begin(), v.end(), bgr121_red);
-        save_dump(view(img), "dump1");
+
+        auto const sum = checksum(view(img));
+        save_dump(view(img), sum, "dump1");
+
+        BOOST_TEST(sum == "23a6f403");
     }
     {
         auto v = view(img);
@@ -114,18 +119,25 @@ void draw_loop(std::ptrdiff_t w, std::ptrdiff_t h)
             ++loc.x();
             --loc.y();
         }
-        save_dump(view(img), "dump2_loop");
+        auto const sum = checksum(view(img));
+        save_dump(view(img), sum, "dump2_loop");
+
+        BOOST_TEST(sum == "2e4950b4");
     }
 }
 
-void draw_step(std::ptrdiff_t w, std::ptrdiff_t h)
+void test_draw_step(std::ptrdiff_t w, std::ptrdiff_t h)
 {
     init();
     bgr121_image_t img(w, h);
     {
         auto v = view(img);
         fill(v.begin(), v.end(), bgr121_red);
-        save_dump(view(img), "dump1");
+
+        auto const sum = checksum(view(img));
+        save_dump(view(img), sum, "dump1");
+
+        BOOST_TEST(sum == "23a6f403");
     }
     {
         auto v = view(img);
@@ -139,7 +151,11 @@ void draw_step(std::ptrdiff_t w, std::ptrdiff_t h)
         *loc = bgr121_blue; // blue red red
         ++loc.x();
         --loc.y();
-        save_dump(view(img), "dump2_step");
+
+        auto const sum = checksum(view(img));
+        save_dump(view(img), sum, "dump2_step");
+
+        BOOST_TEST(sum == "2e4950b4");
     }
 }
 
@@ -150,15 +166,13 @@ int main(int argc , char* argv[])
         if (argc != 2) throw std::invalid_argument("path to output directory missing");
         output_dir_path = argv[1];
 
-        draw_loop(3, 3);
-        draw_step(3, 3);
-
-        return EXIT_SUCCESS;
+        test_draw_loop(3, 3);
+        test_draw_step(3, 3);
     }
     catch (std::exception const& e)
     {
         std::cerr << e.what() << std::endl;
 
     }
-    return EXIT_FAILURE;
+    return boost::report_errors();
 }

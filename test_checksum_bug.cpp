@@ -101,7 +101,8 @@ void save_dump(View const& view, std::string checksum, std::string name)
 // 1. Fill image with red.
 // 2. Draw a blue line along the diagonal.
 // 3. Calculate checksum.
-void test_draw_loop_fail(std::ptrdiff_t w, std::ptrdiff_t h)
+
+void test_draw_with_xy_locator_loop_fail(std::ptrdiff_t w, std::ptrdiff_t h)
 {
     init();
     bgr121_image_t img(w, h);
@@ -110,7 +111,7 @@ void test_draw_loop_fail(std::ptrdiff_t w, std::ptrdiff_t h)
         fill(v.begin(), v.end(), bgr121_red);
 
         auto const sum = checksum(view(img));
-        save_dump(view(img), sum, "dump1");
+        save_dump(view(img), sum, "xy_locator_loop_dump1");
 
         BOOST_TEST(sum == "23a6f403");
     }
@@ -124,7 +125,7 @@ void test_draw_loop_fail(std::ptrdiff_t w, std::ptrdiff_t h)
             --loc.y();
         }
         auto const sum = checksum(view(img));
-        save_dump(view(img), sum, "dump2_loop");
+        save_dump(view(img), sum, "xy_locator_loop_dump2");
 
         BOOST_TEST(sum == "2e4950b4");
 
@@ -144,7 +145,7 @@ void test_draw_loop_fail(std::ptrdiff_t w, std::ptrdiff_t h)
     }
 }
 
-void test_draw_step_good(std::ptrdiff_t w, std::ptrdiff_t h)
+void test_draw_with_xy_locator_step_good(std::ptrdiff_t w, std::ptrdiff_t h)
 {
     init();
     bgr121_image_t img(w, h);
@@ -153,7 +154,7 @@ void test_draw_step_good(std::ptrdiff_t w, std::ptrdiff_t h)
         fill(v.begin(), v.end(), bgr121_red);
 
         auto const sum = checksum(view(img));
-        save_dump(view(img), sum, "dump1");
+        save_dump(view(img), sum, "xy_locator_step_dump1");
 
         BOOST_TEST(sum == "23a6f403");
     }
@@ -171,7 +172,105 @@ void test_draw_step_good(std::ptrdiff_t w, std::ptrdiff_t h)
         --loc.y();
 
         auto const sum = checksum(view(img));
-        save_dump(view(img), sum, "dump2_step");
+        save_dump(view(img), sum, "xy_locator_step_dump2");
+
+        BOOST_TEST(sum == "2e4950b4");
+        auto it = view(img).begin().x();
+        // row 0
+        BOOST_TEST(*it == bgr121_red); ++it;
+        BOOST_TEST(*it == bgr121_red); ++it;
+        BOOST_TEST(*it == bgr121_blue); ++it;
+        // row 1
+        BOOST_TEST(*it == bgr121_red); ++it;
+        BOOST_TEST(*it == bgr121_blue); ++it;
+        BOOST_TEST(*it == bgr121_red); ++it;
+        // row 2
+        BOOST_TEST(*it == bgr121_blue); ++it;
+        BOOST_TEST(*it == bgr121_red); ++it;
+        BOOST_TEST(*it == bgr121_red);
+    }
+}
+
+void test_draw_with_x_iterator_step_good(std::ptrdiff_t w, std::ptrdiff_t h)
+{
+    init();
+    bgr121_image_t img(w, h);
+    {
+        auto v = view(img);
+        fill(v.begin(), v.end(), bgr121_red);
+
+        auto const sum = checksum(view(img));
+        save_dump(view(img), sum, "x_iterator_dump1");
+
+        BOOST_TEST(sum == "23a6f403");
+    }
+    {
+        auto it = view(img).begin().x();
+        // row 0
+        *it = bgr121_red; ++it;
+        *it = bgr121_red; ++it;
+        *it = bgr121_blue; ++it;
+        // row 1
+        *it = bgr121_red; ++it;
+        *it = bgr121_blue; ++it;
+        *it = bgr121_red; ++it;
+        // row 2
+        *it = bgr121_blue; ++it;
+        *it = bgr121_red; ++it;
+        *it = bgr121_red;
+    }
+    {
+        auto const sum = checksum(view(img));
+        save_dump(view(img), sum, "x_iterator_dump2");
+
+        BOOST_TEST(sum == "2e4950b4");
+        auto it = view(img).begin().x();
+        // row 0
+        BOOST_TEST(*it == bgr121_red); ++it;
+        BOOST_TEST(*it == bgr121_red); ++it;
+        BOOST_TEST(*it == bgr121_blue); ++it;
+        // row 1
+        BOOST_TEST(*it == bgr121_red); ++it;
+        BOOST_TEST(*it == bgr121_blue); ++it;
+        BOOST_TEST(*it == bgr121_red); ++it;
+        // row 2
+        BOOST_TEST(*it == bgr121_blue); ++it;
+        BOOST_TEST(*it == bgr121_red); ++it;
+        BOOST_TEST(*it == bgr121_red);
+    }
+}
+
+void test_draw_with_xy_operator_step_good(std::ptrdiff_t w, std::ptrdiff_t h)
+{
+    init();
+    bgr121_image_t img(w, h);
+    {
+        auto v = view(img);
+        fill(v.begin(), v.end(), bgr121_red);
+
+        auto const sum = checksum(view(img));
+        save_dump(view(img), sum, "xy_operator_dump1");
+
+        BOOST_TEST(sum == "23a6f403");
+    }
+    {
+        auto v = view(img);
+        // row 0
+        v(0, 0) = bgr121_red;
+        v(1, 0) = bgr121_red;
+        v(2, 0) = bgr121_blue;
+        // row 1
+        v(0, 1) = bgr121_red;
+        v(1, 1) = bgr121_blue;
+        v(2, 1) = bgr121_red;
+        // row 2
+        v(0, 2) = bgr121_blue;
+        v(1, 2) = bgr121_red;
+        v(2, 2) = bgr121_red;
+    }
+    {
+        auto const sum = checksum(view(img));
+        save_dump(view(img), sum, "xy_operator_dump2");
 
         BOOST_TEST(sum == "2e4950b4");
         auto it = view(img).begin().x();
@@ -197,8 +296,10 @@ int main(int argc , char* argv[])
         if (argc != 2) throw std::invalid_argument("path to output directory missing");
         output_dir_path = argv[1];
 
-        test_draw_loop_fail(3, 3);
-        test_draw_step_good(3, 3);
+        test_draw_with_xy_locator_loop_fail(3, 3);
+        test_draw_with_xy_locator_step_good(3, 3);
+        test_draw_with_x_iterator_step_good(3, 3);
+        test_draw_with_xy_operator_step_good(3, 3); // immediate pixel reference
     }
     catch (std::exception const& e)
     {

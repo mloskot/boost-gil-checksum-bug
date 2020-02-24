@@ -1,3 +1,7 @@
+// Test:
+// 1. Fill image with red.
+// 2. Draw a blue line along the diagonal.
+// 3. Verify diagonal pixels are blue.
 #include <boost/core/lightweight_test.hpp>
 #include <boost/crc.hpp>
 #include <boost/gil.hpp>
@@ -16,26 +20,24 @@ using bgr121_pixel_t = typename bgr121_view_t::value_type;
 
 bgr121_pixel_t bgr121_red(0), bgr121_blue(0);
 
-void init()
+void fill_image_red(bgr121_image_t& img)
 {
     gil::rgb8_pixel_t red8(255, 0, 0);
     gil::rgb8_pixel_t blue8(0, 0, 255);
     gil::color_convert(red8, bgr121_red);
     gil::color_convert(blue8, bgr121_blue);
+
+    auto v = view(img);
+    fill(v.begin(), v.end(), bgr121_red);
+
+    for (auto it = view(img).begin().x(), end = view(img).end().x(); it != end; ++it)
+        BOOST_TEST(*it == bgr121_red);
 }
 
 void test_draw_with_xy_locator_loop_fail(std::ptrdiff_t w, std::ptrdiff_t h)
 {
-    init();
-
     bgr121_image_t img(w, h);
-    {
-        auto v = view(img);
-        fill(v.begin(), v.end(), bgr121_red);
-
-        for (auto it = view(img).begin().x(), end = view(img).end().x(); it != end; ++it)
-            BOOST_TEST(*it == bgr121_red);
-    }
+    fill_image_red(img);
     {
         auto v = view(img);
         auto loc = v.xy_at(0, v.height() - 1);
@@ -65,7 +67,7 @@ void test_draw_with_xy_locator_loop_fail(std::ptrdiff_t w, std::ptrdiff_t h)
         BOOST_TEST(*it == bgr121_blue); ++it;
         // row 1
         BOOST_TEST(*it == bgr121_red); ++it;
-        BOOST_TEST(*it == bgr121_blue); ++it;
+        BOOST_TEST(*it == bgr121_blue); ++it; // FAIL
         BOOST_TEST(*it == bgr121_red); ++it;
         // row 2
         BOOST_TEST(*it == bgr121_blue); ++it;
@@ -76,16 +78,8 @@ void test_draw_with_xy_locator_loop_fail(std::ptrdiff_t w, std::ptrdiff_t h)
 
 void test_draw_with_xy_locator_loop_good(std::ptrdiff_t w, std::ptrdiff_t h)
 {
-    init();
-
     bgr121_image_t img(w, h);
-    {
-        auto v = view(img);
-        fill(v.begin(), v.end(), bgr121_red);
-
-        for (auto it = view(img).begin().x(), end = view(img).end().x(); it != end; ++it)
-            BOOST_TEST(*it == bgr121_red);
-    }
+    fill_image_red(img);
     {
         auto v = view(img);
         auto loc = v.xy_at(0, v.height() - 1);
@@ -120,15 +114,8 @@ void test_draw_with_xy_locator_loop_good(std::ptrdiff_t w, std::ptrdiff_t h)
 
 void test_draw_with_xy_locator_step_good(std::ptrdiff_t w, std::ptrdiff_t h)
 {
-    init();
     bgr121_image_t img(w, h);
-    {
-        auto v = view(img);
-        fill(v.begin(), v.end(), bgr121_red);
-
-        for (auto it = view(img).begin().x(), end = view(img).end().x(); it != end; ++it)
-            BOOST_TEST(*it == bgr121_red);
-    }
+    fill_image_red(img);
     {
         auto v = view(img);
 

@@ -105,15 +105,14 @@ void save_dump(View const& view, std::string checksum, std::string name)
 void test_draw_with_xy_locator_loop_fail(std::ptrdiff_t w, std::ptrdiff_t h)
 {
     init();
+
     bgr121_image_t img(w, h);
     {
         auto v = view(img);
         fill(v.begin(), v.end(), bgr121_red);
 
-        auto const sum = checksum(view(img));
-        save_dump(view(img), sum, "xy_locator_loop_dump1");
-
-        BOOST_TEST(sum == "23a6f403");
+        for (auto it = view(img).begin().x(), end = view(img).end().x(); it != end; ++it)
+            BOOST_TEST(*it == bgr121_red);
     }
     {
         auto v = view(img);
@@ -121,14 +120,66 @@ void test_draw_with_xy_locator_loop_fail(std::ptrdiff_t w, std::ptrdiff_t h)
         for (std::ptrdiff_t y = 0; y < v.height(); ++y)
         {
             *loc = bgr121_blue;
-            ++loc.x();
+            // OPTION 1 FAILS
+            ++loc.x(); // INCREMENT X FIRST
             --loc.y();
+
+            // OPTION 2 FAILS TOO
+            //loc.x()++; // INCREMENT X FIRST
+            //loc.y()--;
+
+            // OPTION 3 FAILS TOO
+            //auto& x_it = loc.x(); // INCREMENT X FIRST
+            //++x_it;
+            //auto& y_it = loc.y();
+            //--y_it;
         }
-        auto const sum = checksum(view(img));
-        save_dump(view(img), sum, "xy_locator_loop_dump2");
+    }
+    {
+        auto it = view(img).begin().x();
+        // row 0
+        BOOST_TEST(*it == bgr121_red); ++it;
+        BOOST_TEST(*it == bgr121_red); ++it;
+        BOOST_TEST(*it == bgr121_blue); ++it;
+        // row 1
+        BOOST_TEST(*it == bgr121_red); ++it;
+        BOOST_TEST(*it == bgr121_blue); ++it;
+        BOOST_TEST(*it == bgr121_red); ++it;
+        // row 2
+        BOOST_TEST(*it == bgr121_blue); ++it;
+        BOOST_TEST(*it == bgr121_red); ++it;
+        BOOST_TEST(*it == bgr121_red);
+    }
+}
 
-        BOOST_TEST(sum == "2e4950b4");
+void test_draw_with_xy_locator_loop_good(std::ptrdiff_t w, std::ptrdiff_t h)
+{
+    init();
 
+    bgr121_image_t img(w, h);
+    {
+        auto v = view(img);
+        fill(v.begin(), v.end(), bgr121_red);
+
+        for (auto it = view(img).begin().x(), end = view(img).end().x(); it != end; ++it)
+            BOOST_TEST(*it == bgr121_red);
+    }
+    {
+        auto v = view(img);
+        auto loc = v.xy_at(0, v.height() - 1);
+        for (std::ptrdiff_t y = 0; y < v.height(); ++y)
+        {
+            *loc = bgr121_blue;
+            // OPTION 1 WORKS
+            --loc.y();
+            ++loc.x(); // INCREMENT X SECOND
+
+            // OPTION 2  WORKS TOO
+            //loc.y()--;
+            //loc.x()++; // INCREMENT X SECOND
+        }
+    }
+    {
         auto it = view(img).begin().x();
         // row 0
         BOOST_TEST(*it == bgr121_red); ++it;
@@ -153,13 +204,12 @@ void test_draw_with_xy_locator_step_good(std::ptrdiff_t w, std::ptrdiff_t h)
         auto v = view(img);
         fill(v.begin(), v.end(), bgr121_red);
 
-        auto const sum = checksum(view(img));
-        save_dump(view(img), sum, "xy_locator_step_dump1");
-
-        BOOST_TEST(sum == "23a6f403");
+        for (auto it = view(img).begin().x(), end = view(img).end().x(); it != end; ++it)
+            BOOST_TEST(*it == bgr121_red);
     }
     {
         auto v = view(img);
+
         auto loc = v.xy_at(0, v.height() - 1);
         *loc = bgr121_blue; // red red blue
         ++loc.x();
@@ -170,11 +220,8 @@ void test_draw_with_xy_locator_step_good(std::ptrdiff_t w, std::ptrdiff_t h)
         *loc = bgr121_blue; // blue red red
         ++loc.x();
         --loc.y();
-
-        auto const sum = checksum(view(img));
-        save_dump(view(img), sum, "xy_locator_step_dump2");
-
-        BOOST_TEST(sum == "2e4950b4");
+    }
+    {
         auto it = view(img).begin().x();
         // row 0
         BOOST_TEST(*it == bgr121_red); ++it;

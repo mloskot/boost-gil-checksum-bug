@@ -7,9 +7,14 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 find_package(Boost 1.70 REQUIRED)
 
-add_executable(test_checksum_bug test_checksum_bug.cpp)
-target_link_libraries(test_checksum_bug PRIVATE Boost::headers)
-target_compile_definitions(test_checksum_bug PRIVATE BOOST_GIL_USE_CONCEPT_CHECK=1)
-
 enable_testing()
-add_test(NAME test_checksum_bug COMMAND test_checksum_bug "${CMAKE_CURRENT_SOURCE_DIR}")
+
+add_executable(minimal_test minimal_test.cpp)
+target_link_libraries(minimal_test PRIVATE Boost::headers)
+target_compile_definitions(minimal_test PRIVATE BOOST_GIL_USE_CONCEPT_CHECK=1)
+add_test(NAME minimal_test COMMAND minimal_test)
+
+add_executable(complete_test complete_test.cpp)
+target_link_libraries(complete_test PRIVATE Boost::headers)
+target_compile_definitions(complete_test PRIVATE BOOST_GIL_USE_CONCEPT_CHECK=1)
+add_test(NAME complete_test COMMAND complete_test "${CMAKE_CURRENT_SOURCE_DIR}")

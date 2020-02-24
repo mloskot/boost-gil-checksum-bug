@@ -28,5 +28,8 @@ project
     ]
   ;
 
+run minimal_test.cpp : $(cwd_path) ;
+
 local cwd_path = [ path.native [ path.pwd ] ] ;
-run test_checksum_bug.cpp : $(cwd_path) ;
+run complete_test.cpp : $(cwd_path) ;
+

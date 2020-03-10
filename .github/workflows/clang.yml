@@ -48,6 +48,8 @@ jobs:
             version: "10"
 
     steps:
+      - uses: actions/checkout@v2
+
       - name: Install
         run: |
           sudo add-apt-repository "deb http://apt.llvm.org/bionic/ llvm-toolchain-bionic-10 main"
@@ -83,15 +85,13 @@ jobs:
           ls -l /usr/local/bin/b2
           b2 -v
 
-      - name: Set up clang toolset in ~/user-config.jam
+      - name: Set clang toolset in ~/user-config.jam
         run: |
           export CXX_NAME=clang++-${{ matrix.version }}
           echo ${CXX_NAME}
           echo "# $HOME/user-config.jam" > $HOME/user-config.jam
           echo "using clang : : $(which clang++-${{ matrix.version }}) ;" > ${HOME}/user-config.jam
           test -f $HOME/user-config.jam && cat $HOME/user-config.jam
-
-      - uses: actions/checkout@v2
 
       - name: "Test 32-bit debug"
         run: |

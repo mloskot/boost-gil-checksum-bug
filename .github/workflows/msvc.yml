@@ -21,6 +21,8 @@ jobs:
             b2_cxxstd: 14,17,2a
 
     steps:
+      - uses: actions/checkout@v2
+
       - name: Set environment
         id: setenv
         shell: pwsh
@@ -45,8 +47,8 @@ jobs:
           .\bootstrap.bat --with-toolset=msvc
           .\b2 headers
           .\b2 -v
-
-      - uses: actions/checkout@v2
+          dir .
+          & "$env:BOOST_ROOT\b2" -v
 
       - name: "Test 32-bit debug"
         shell: pwsh

@@ -44,6 +44,8 @@ jobs:
             version: "9"
 
     steps:
+      - uses: actions/checkout@v2
+
       - name: Install
         run: |
           # gcc-4.8 is not available in Bionic anymore
@@ -79,8 +81,6 @@ jobs:
           sudo cp $BOOST_ROOT/b2 /usr/local/bin/
           ls -l /usr/local/bin/b2
           b2 -v
-
-      - uses: actions/checkout@v2
 
       - name: "Test 32-bit debug"
         run: |

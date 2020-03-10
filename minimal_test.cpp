@@ -45,15 +45,15 @@ void test_draw_with_xy_locator_loop_fail(std::ptrdiff_t w, std::ptrdiff_t h)
         {
             *loc = bgr121_blue;
             // OPTION 1 FAILS
-            ++loc.x(); // INCREMENT X FIRST
+            ++loc.x(); // PRE-INCREMENT X FIRST
             --loc.y();
 
             // OPTION 2 FAILS TOO
-            //loc.x()++; // INCREMENT X FIRST
+            //loc.x()++; // POST-INCREMENT X FIRST
             //loc.y()--;
 
             // OPTION 3 FAILS TOO
-            //auto& x_it = loc.x(); // INCREMENT X FIRST
+            //auto& x_it = loc.x(); // PRE-INCREMENT NAMED X FIRST
             //++x_it;
             //auto& y_it = loc.y();
             //--y_it;
@@ -88,11 +88,11 @@ void test_draw_with_xy_locator_loop_good(std::ptrdiff_t w, std::ptrdiff_t h)
             *loc = bgr121_blue;
             // OPTION 1 WORKS
             --loc.y();
-            ++loc.x(); // INCREMENT X SECOND
+            ++loc.x(); // PRE-INCREMENT X SECOND
 
             // OPTION 2  WORKS TOO
             //loc.y()--;
-            //loc.x()++; // INCREMENT X SECOND
+            //loc.x()++; // POST-INCREMENT X SECOND
         }
     }
     {
@@ -147,7 +147,7 @@ void test_draw_with_xy_locator_step_good(std::ptrdiff_t w, std::ptrdiff_t h)
     }
 }
 
-int main(int argc , char* argv[])
+int main()
 {
     try
     {

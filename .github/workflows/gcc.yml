@@ -44,8 +44,6 @@ jobs:
             version: "9"
 
     steps:
-      - uses: actions/checkout@v2
-
       - name: Install
         run: |
           # gcc-4.8 is not available in Bionic anymore
@@ -58,7 +56,10 @@ jobs:
       - name: Set environment
         id: setenv
         run: |
+          echo "::set-env name=BOOST_SELF::$(basename $GITHUB_WORKSPACE)"
           echo "::set-env name=BOOST_ROOT::$GITHUB_WORKSPACE/boost-root"
+          echo "::set-output name=boost_self::$(basename $GITHUB_WORKSPACE)"
+          echo "::set-output name=boost_root::$GITHUB_WORKSPACE/boost-root"
 
       - name: Clone boostorg/boost
         run: |
@@ -68,9 +69,16 @@ jobs:
           git submodule update -q --init tools/boost_install
           git submodule update -q --init tools/boostdep
           git submodule update -q --init tools/build
-          python tools/boostdep/depinst/depinst.py --include benchmark --include example --include examples --include tools core
-          python tools/boostdep/depinst/depinst.py --include benchmark --include example --include examples --include tools crc
-          python tools/boostdep/depinst/depinst.py --include benchmark --include example --include examples --include tools gil
+          mkdir -p libs/$BOOST_SELF
+
+      - uses: actions/checkout@v2
+        with:
+          path: ${{ steps.setenv.outputs.boost_root }}/libs/${{ steps.setenv.outputs.boost_self }}
+
+      - name: Run tools/boostdep/depinst/depinst.py
+        run: |
+          cd $BOOST_ROOT
+          python tools/boostdep/depinst/depinst.py --include benchmark --include example --include examples --include tools $BOOST_SELF
 
       - name: Bootstrap boostorg/boost
         run: |
@@ -86,16 +94,16 @@ jobs:
 
       - name: "Test 32-bit debug"
         run: |
-          $BOOST_ROOT/b2 -sBOOST_ROOT=$BOOST_ROOT toolset=${{ matrix.b2_toolset }} cxxstd=${{ matrix.b2_cxxstd }} variant=debug address-model=32
+          $BOOST_ROOT/b2 -sBOOST_ROOT=$BOOST_ROOT toolset=${{ matrix.b2_toolset }} cxxstd=${{ matrix.b2_cxxstd }} variant=debug address-model=32 libs/$BOOST_SELF
 
       - name: "Test 32-bit release"
         run: |
-          $BOOST_ROOT/b2 -sBOOST_ROOT=$BOOST_ROOT toolset=${{ matrix.b2_toolset }} cxxstd=${{ matrix.b2_cxxstd }} variant=release address-model=32
+          $BOOST_ROOT/b2 -sBOOST_ROOT=$BOOST_ROOT toolset=${{ matrix.b2_toolset }} cxxstd=${{ matrix.b2_cxxstd }} variant=release address-model=32 libs/$BOOST_SELF
 
       - name: "Test 64-bit debug"
         run: |
-          $BOOST_ROOT/b2 -sBOOST_ROOT=$BOOST_ROOT toolset=${{ matrix.b2_toolset }} cxxstd=${{ matrix.b2_cxxstd }} variant=debug address-model=64
+          $BOOST_ROOT/b2 -sBOOST_ROOT=$BOOST_ROOT toolset=${{ matrix.b2_toolset }} cxxstd=${{ matrix.b2_cxxstd }} variant=debug address-model=64 libs/$BOOST_SELF
 
       - name: "Test 64-bit release"
         run: |
-          $BOOST_ROOT/b2 -sBOOST_ROOT=$BOOST_ROOT toolset=${{ matrix.b2_toolset }} cxxstd=${{ matrix.b2_cxxstd }} variant=release address-model=64
+          $BOOST_ROOT/b2 -sBOOST_ROOT=$BOOST_ROOT toolset=${{ matrix.b2_toolset }} cxxstd=${{ matrix.b2_cxxstd }} variant=release address-model=64 libs/$BOOST_SELF

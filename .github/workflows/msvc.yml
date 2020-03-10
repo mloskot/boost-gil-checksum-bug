@@ -21,13 +21,14 @@ jobs:
             b2_cxxstd: 14,17,2a
 
     steps:
-      - uses: actions/checkout@v2
-
       - name: Set environment
         id: setenv
         shell: pwsh
         run: |
+          echo "::set-env name=BOOST_SELF::$((Get-Item $env:GITHUB_WORKSPACE).BaseName)"
           echo "::set-env name=BOOST_ROOT::$env:GITHUB_WORKSPACE\boost-root"
+          echo "::set-output name=boost_self::$((Get-Item $env:GITHUB_WORKSPACE).BaseName)"
+          echo "::set-output name=boost_root::$env:GITHUB_WORKSPACE\boost-root"
 
       - name: Clone boostorg/boost
         shell: pwsh
@@ -38,9 +39,17 @@ jobs:
           git submodule update -q --init tools/boost_install
           git submodule update -q --init tools/boostdep
           git submodule update -q --init tools/build
-          python tools/boostdep/depinst/depinst.py --include benchmark --include example --include examples --include tools core
-          python tools/boostdep/depinst/depinst.py --include benchmark --include example --include examples --include tools crc
-          python tools/boostdep/depinst/depinst.py --include benchmark --include example --include examples --include tools gil
+          New-Item -Path libs\$env:BOOST_SELF -ItemType Directory -ErrorAction SilentlyContinue
+
+      - uses: actions/checkout@v2
+        with:
+          path: ${{ steps.setenv.outputs.boost_root }}/libs/${{ steps.setenv.outputs.boost_self }}
+
+      - name: Run tools/boostdep/depinst/depinst.py
+        shell: pwsh
+        run: |
+          cd $env:BOOST_ROOT
+          python tools/boostdep/depinst/depinst.py --include benchmark --include example --include examples --include tools $env:BOOST_SELF
 
       - name: Bootstrap boostorg/boost
         shell: pwsh
@@ -49,26 +58,24 @@ jobs:
           .\bootstrap.bat --with-toolset=msvc
           .\b2 headers
           .\b2 -v
-          dir .
-          & "$env:BOOST_ROOT\b2" -v
 
       - name: "Test 32-bit debug"
         shell: pwsh
         run: |
-          & "$env:BOOST_ROOT\b2" toolset=${{ matrix.b2_toolset }} cxxstd=${{ matrix.b2_cxxstd }} variant=debug address-model=32
+          & "$env:BOOST_ROOT\b2" toolset=${{ matrix.b2_toolset }} cxxstd=${{ matrix.b2_cxxstd }} variant=debug address-model=32 libs/$env:BOOST_SELF
 
       - name: "Test 32-bit release"
         shell: pwsh
         run: |
-          & "$env:BOOST_ROOT\b2" toolset=${{ matrix.b2_toolset }} cxxstd=${{ matrix.b2_cxxstd }} variant=release address-model=32
+          & "$env:BOOST_ROOT\b2" toolset=${{ matrix.b2_toolset }} cxxstd=${{ matrix.b2_cxxstd }} variant=release address-model=32 libs/$env:BOOST_SELF
 
       - name: "Test 64-bit debug"
         shell: pwsh
         run: |
-          & "$env:BOOST_ROOT\b2" toolset=${{ matrix.b2_toolset }} cxxstd=${{ matrix.b2_cxxstd }} variant=debug address-model=64
+          & "$env:BOOST_ROOT\b2" toolset=${{ matrix.b2_toolset }} cxxstd=${{ matrix.b2_cxxstd }} variant=debug address-model=64 libs/$env:BOOST_SELF
 
       - name: "Test 64-bit release"
         shell: pwsh
         run: |
           echo "!!!!!! THIS IS EXPECTED TO FAIL !!!!!!"
-          & "$env:BOOST_ROOT\b2" toolset=${{ matrix.b2_toolset }} cxxstd=${{ matrix.b2_cxxstd }} variant=release address-model=64
+          & "$env:BOOST_ROOT\b2" toolset=${{ matrix.b2_toolset }} cxxstd=${{ matrix.b2_cxxstd }} variant=release address-model=64 libs/$env:BOOST_SELF

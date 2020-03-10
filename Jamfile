@@ -1,12 +1,14 @@
-# Run from inside Boost source tree e.g. <boost-root>/libs/boost-gil-checksum-bug/
-import ../config/checks/config : requires ;
+import os ;
 import path ;
 import testing ;
+
+local BOOST_ROOT = [ os.environ BOOST_ROOT ] ;
 
 project
   :
   requirements
     <include>.
+    <include>$(BOOST_ROOT)
     #<define>BOOST_GIL_USE_CONCEPT_CHECK=1
     <toolset>msvc:<asynch-exceptions>on
     <toolset>msvc:<cxxflags>/bigobj
@@ -19,17 +21,9 @@ project
     <toolset>darwin:<cxxflags>"-fstrict-aliasing"
     <toolset>clang,<variant>debug:<cxxflags>"-fstrict-aliasing"
     <toolset>clang,<variant>release:<cxxflags>"-fstrict-aliasing"
-    [ requires
-        cxx11_constexpr
-        cxx11_defaulted_functions
-        cxx11_template_aliases
-        cxx11_trailing_result_types  # implies decltype and auto
-        cxx11_variadic_templates
-    ]
   ;
 
-run minimal_test.cpp : $(cwd_path) ;
+run minimal_test.cpp : : : : minimal ;
 
 local cwd_path = [ path.native [ path.pwd ] ] ;
-run complete_test.cpp : $(cwd_path) ;
-
+run complete_test.cpp : $(cwd_path) : : : complete ;

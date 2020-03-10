@@ -3,7 +3,6 @@
 // 2. Draw a blue line along the diagonal.
 // 3. Verify diagonal pixels are blue.
 #include <boost/core/lightweight_test.hpp>
-#include <boost/crc.hpp>
 #include <boost/gil.hpp>
 namespace gil = boost::gil;
 

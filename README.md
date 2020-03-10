@@ -1,6 +1,6 @@
 # boost-gil-checksum-bug
 
-> TL;TR: Why Boost.GIL tests based on checksum for bit-aligned pixels fail on MSVC 64-bit optimized builds?
+> TL;TR: Why Boost.GIL [checksum tests for bit-aligned image](https://github.com/boostorg/gil/blob/2ff2d31895dae665ef3e05d0496bc082470e229c/test/legacy/image.cpp#L373-L381) fail on MSVC 64-bit optimized builds?
 
 [![clang](https://github.com/mloskot/boost-gil-checksum-bug/workflows/clang/badge.svg)](https://github.com/mloskot/boost-gil-checksum-bug/actions?query=workflow:clang)
 [![gcc](https://github.com/mloskot/boost-gil-checksum-bug/workflows/gcc/badge.svg)](https://github.com/mloskot/boost-gil-checksum-bug/actions?query=workflow:gcc)
@@ -11,9 +11,8 @@
 
 This applies to number of versions, as checked:
 
-- Boost `develop` branch
-- Boost 1.7x
-- Boost 1.6x
+- Boost.GIL `develop` branch
+- Boost 1.67 through 1.72 (current release)
 
 ## Test
 

@@ -1,0 +1,70 @@
+name: msvc
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    name: ${{ matrix.b2_toolset }}
+    runs-on: windows-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        # TODO: Waiting for msvc-14.0, msvc-14.1
+        # https://github.com/actions/virtual-environments/issues/68#issuecomment-596817066
+        b2_toolset: [
+          msvc-14.2
+        ]
+
+        include:
+          - b2_toolset: msvc-14.2
+            b2_cxxstd: 14,17,2a
+
+    steps:
+      - name: Set environment
+        id: setenv
+        shell: pwsh
+        run: |
+          echo "::set-env name=BOOST_ROOT::$env:GITHUB_WORKSPACE\boost-root"
+
+      - name: Clone boostorg/boost
+        shell: pwsh
+        run: |
+          git clone -b develop --depth 1 https://github.com/boostorg/boost.git $env:BOOST_ROOT
+          cd $env:BOOST_ROOT
+          git submodule update -q --init libs/headers
+          git submodule update -q --init tools/boost_install
+          git submodule update -q --init tools/boostdep
+          git submodule update -q --init tools/build
+          python tools/boostdep/depinst/depinst.py --include benchmark --include example --include examples --include tools libs/gil
+
+      - name: Bootstrap boostorg/boost
+        shell: pwsh
+        run: |
+          cd $env:BOOST_ROOT
+          .\bootstrap.bat --with-toolset=msvc
+          .\b2 headers
+          .\b2 -v
+
+      - uses: actions/checkout@v2
+
+      - name: "Test 32-bit debug"
+        shell: pwsh
+        run: |
+          & "$env:BOOST_ROOT\b2" toolset=${{ matrix.b2_toolset }} cxxstd=${{ matrix.b2_cxxstd }} variant=debug address-model=32
+
+      - name: "Test 32-bit release"
+        shell: pwsh
+        run: |
+          & "$env:BOOST_ROOT\b2" toolset=${{ matrix.b2_toolset }} cxxstd=${{ matrix.b2_cxxstd }} variant=release address-model=32
+
+      - name: "Test 64-bit debug"
+        shell: pwsh
+        run: |
+          & "$env:BOOST_ROOT\b2" toolset=${{ matrix.b2_toolset }} cxxstd=${{ matrix.b2_cxxstd }} variant=debug address-model=64
+
+      - name: "Test 64-bit release"
+        shell: pwsh
+        run: |
+          echo "!!!!!! THIS IS EXPECTED TO FAIL !!!!!!"
+          & "$env:BOOST_ROOT\b2" toolset=${{ matrix.b2_toolset }} cxxstd=${{ matrix.b2_cxxstd }} variant=release address-model=64

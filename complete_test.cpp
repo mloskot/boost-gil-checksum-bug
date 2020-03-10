@@ -1,6 +1,7 @@
 #include <boost/core/lightweight_test.hpp>
 #include <boost/crc.hpp>
 #include <boost/gil.hpp>
+#include <boost/mp11.hpp>
 #include <cstdint>
 #include <exception>
 #include <fstream>

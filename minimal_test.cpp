@@ -4,6 +4,7 @@
 // 3. Verify diagonal pixels are blue.
 #include <boost/core/lightweight_test.hpp>
 #include <boost/gil.hpp>
+#include <boost/mp11.hpp>
 namespace gil = boost::gil;
 
 using bgr121_ref_t = gil::bit_aligned_pixel_reference

@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 11 CACHE STRING "C++ standard version to use (default is 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-find_package(Boost 1.70 REQUIRED)
+find_package(Boost 1.67 REQUIRED)
 
 enable_testing()
 

@@ -2,15 +2,25 @@
 // 1. Fill image with red.
 // 2. Draw a blue line along the diagonal.
 // 3. Verify diagonal pixels are blue.
+#include <boost/version.hpp>
 #include <boost/core/lightweight_test.hpp>
+#if BOOST_VERSION < 106900
+#include <boost/gil/gil_all.hpp>
+#else
 #include <boost/gil.hpp>
-#include <boost/mp11.hpp>
+#endif
 namespace gil = boost::gil;
+
+#if BOOST_VERSION > 107200
+using channel_sizes_t = boost::mp11::mp_list_c<int, 1, 2, 1>;
+#else
+using channel_sizes_t = boost::mpl::vector3_c<int, 1, 2, 1>;
+#endif
 
 using bgr121_ref_t = gil::bit_aligned_pixel_reference
 <
     std::uint8_t,
-    boost::mp11::mp_list_c<int, 1, 2, 1>,
+    channel_sizes_t,
     gil::bgr_layout_t,
     true
 > const;
@@ -28,7 +38,7 @@ void fill_image_red(bgr121_image_t& img)
     gil::color_convert(blue8, bgr121_blue);
 
     auto v = view(img);
-    fill(v.begin(), v.end(), bgr121_red);
+    std::fill(v.begin(), v.end(), bgr121_red);
 
     for (auto it = view(img).begin().x(), end = view(img).end().x(); it != end; ++it)
         BOOST_TEST(*it == bgr121_red);

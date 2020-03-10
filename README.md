@@ -9,7 +9,7 @@
 
 ## Boost.GIL
 
-This applies to number of versions, as checked:
+The bug was reproduced with GIL from:
 
 - Boost.GIL `develop` branch
 - Boost 1.67 through 1.72 (current release)
@@ -17,7 +17,7 @@ This applies to number of versions, as checked:
 ## Test
 
 The [minimal_test.cpp](minimal_test.cpp) performs the following test:
-1. Create 3x3 image based on bit-aligned pixel (BGR121)
+1. Create 3x3 image based on bit-aligned pixel (`bgr121_image_t`)
 2. Fill image with red
 3. Draw blue diagonal
 

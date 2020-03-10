@@ -27,3 +27,5 @@ run minimal_test.cpp : : : : minimal ;
 
 local cwd_path = [ path.native [ path.pwd ] ] ;
 run complete_test.cpp : $(cwd_path) : : : complete ;
+
+alias test : minimal complete ;

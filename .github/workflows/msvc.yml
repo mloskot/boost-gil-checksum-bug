@@ -38,7 +38,9 @@ jobs:
           git submodule update -q --init tools/boost_install
           git submodule update -q --init tools/boostdep
           git submodule update -q --init tools/build
-          python tools/boostdep/depinst/depinst.py --include benchmark --include example --include examples --include tools libs/gil
+          python tools/boostdep/depinst/depinst.py --include benchmark --include example --include examples --include tools core
+          python tools/boostdep/depinst/depinst.py --include benchmark --include example --include examples --include tools crc
+          python tools/boostdep/depinst/depinst.py --include benchmark --include example --include examples --include tools gil
 
       - name: Bootstrap boostorg/boost
         shell: pwsh

@@ -104,16 +104,20 @@ jobs:
 
       - name: "Test 32-bit debug"
         run: |
-          $BOOST_ROOT/b2 -sBOOST_ROOT=$BOOST_ROOT toolset=${{ matrix.b2_toolset }} cxxstd=${{ matrix.b2_cxxstd }} variant=debug address-model=32 libs/$BOOST_SELF
+          cd $BOOST_ROOT
+          $BOOST_ROOT/b2 toolset=${{ matrix.b2_toolset }} cxxstd=${{ matrix.b2_cxxstd }} variant=debug address-model=32 libs/$BOOST_SELF
 
       - name: "Test 32-bit release"
         run: |
-          $BOOST_ROOT/b2 -sBOOST_ROOT=$BOOST_ROOT toolset=${{ matrix.b2_toolset }} cxxstd=${{ matrix.b2_cxxstd }} variant=release address-model=32 libs/$BOOST_SELF
+          cd $BOOST_ROOT
+          $BOOST_ROOT/b2 toolset=${{ matrix.b2_toolset }} cxxstd=${{ matrix.b2_cxxstd }} variant=release address-model=32 libs/$BOOST_SELF
 
       - name: "Test 64-bit debug"
         run: |
-          $BOOST_ROOT/b2 -sBOOST_ROOT=$BOOST_ROOT toolset=${{ matrix.b2_toolset }} cxxstd=${{ matrix.b2_cxxstd }} variant=debug address-model=64 libs/$BOOST_SELF
+          cd $BOOST_ROOT
+          $BOOST_ROOT/b2 toolset=${{ matrix.b2_toolset }} cxxstd=${{ matrix.b2_cxxstd }} variant=debug address-model=64 libs/$BOOST_SELF
 
       - name: "Test 64-bit release"
         run: |
-          $BOOST_ROOT/b2 -sBOOST_ROOT=$BOOST_ROOT toolset=${{ matrix.b2_toolset }} cxxstd=${{ matrix.b2_cxxstd }} variant=release address-model=64 libs/$BOOST_SELF
+          cd $BOOST_ROOT
+          $BOOST_ROOT/b2 toolset=${{ matrix.b2_toolset }} cxxstd=${{ matrix.b2_cxxstd }} variant=release address-model=64 libs/$BOOST_SELF

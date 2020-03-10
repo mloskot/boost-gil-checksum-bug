@@ -62,20 +62,24 @@ jobs:
       - name: "Test 32-bit debug"
         shell: pwsh
         run: |
+          cd $env:BOOST_ROOT
           & "$env:BOOST_ROOT\b2" toolset=${{ matrix.b2_toolset }} cxxstd=${{ matrix.b2_cxxstd }} variant=debug address-model=32 libs/$env:BOOST_SELF
 
       - name: "Test 32-bit release"
         shell: pwsh
         run: |
+          cd $env:BOOST_ROOT
           & "$env:BOOST_ROOT\b2" toolset=${{ matrix.b2_toolset }} cxxstd=${{ matrix.b2_cxxstd }} variant=release address-model=32 libs/$env:BOOST_SELF
 
       - name: "Test 64-bit debug"
         shell: pwsh
         run: |
+          cd $env:BOOST_ROOT
           & "$env:BOOST_ROOT\b2" toolset=${{ matrix.b2_toolset }} cxxstd=${{ matrix.b2_cxxstd }} variant=debug address-model=64 libs/$env:BOOST_SELF
 
       - name: "Test 64-bit release"
         shell: pwsh
         run: |
           echo "!!!!!! THIS IS EXPECTED TO FAIL !!!!!!"
+          cd $env:BOOST_ROOT
           & "$env:BOOST_ROOT\b2" toolset=${{ matrix.b2_toolset }} cxxstd=${{ matrix.b2_cxxstd }} variant=release address-model=64 libs/$env:BOOST_SELF
